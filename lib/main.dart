@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() => runApp(MyApp());
 
@@ -43,10 +44,15 @@ class MyHomePage extends StatefulWidget {
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
+
+
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _counter;
+  int _counter=0;
+  bool _active = false;
+  Random _rand = new Random();
+  Color _rndColor;
 
   void _incrementCounter() {
     setState(() {
@@ -55,9 +61,19 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter='click';
+      _counter++;
     });
   }
+
+  void _handleTap() {
+    setState(() {
+      _rand = new Random();
+
+      //_active = !_active;
+      _rndColor = Color((_rand.nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0);
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,16 +83,19 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: _handleTap,
+      child: Scaffold(
+        appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+          title: Text(widget.title),
       ),
-      body: Center(
+        backgroundColor: _rndColor,
+        body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
+          child: Column(
           // Column is also layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
           // children horizontally, and tries to be as tall as its parent.
@@ -91,11 +110,11 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Hey there',
-              style: Theme.of(context).textTheme.display1,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Hey there',
+                style: Theme.of(context).textTheme.display1,
 
             ),
             Text(
@@ -103,13 +122,52 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.display1,
             ),
           ],
+
         ),
+
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    ),
+    );
+  }
+}
+
+class Tapbox extends StatefulWidget {
+  Tapbox({Key key}) : super(key: key);
+
+  @override
+  _TapboxState createState() => _TapboxState();
+}
+
+class _TapboxState extends State<Tapbox> {
+  bool _active = false;
+
+  void _handleTap() {
+    setState(() {
+      _active = !_active;
+    });
+  }
+
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _handleTap,
+      child: Container(
+        child: Center(
+          child: Text(
+            _active ? 'Active' : 'Inactive',
+            style: TextStyle(fontSize: 32.0, color: Colors.white),
+          ),
+        ),
+        width: 200.0,
+        height: 200.0,
+        decoration: BoxDecoration(
+          color: _active ? Colors.lightGreen[700] : Colors.grey[600],
+        ),
+      ),
     );
   }
 }
